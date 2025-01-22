@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Adresi ile Konum Al</title>
+</head>
+<body>
+    <h1>IP Adresi ile Konum Al</h1>
+    
+    <!-- Kullanıcının IP adresini girmesi için alan -->
+    <label for="ipAdres">IP Adresi:</label>
+    <input type="text" id="ipAdres" placeholder="Örnek: 8.8.8.8"><br><br>
+
+    <button onclick="getLocationByIP()">Konumu Al</button>
+
+    <h2>Alınan Konum:</h2>
+
+    <label for="konumEnlem">Enlem:</label>
+    <input type="text" id="konumEnlem" readonly><br><br>
+    
+    <label for="konumBoylam">Boylam:</label>
+    <input type="text" id="konumBoylam" readonly><br><br>
+
+    <p id="konum"></p>
+
+    <script>
+        function getLocationByIP() {
+            const ipAdres = document.getElementById("ipAdres").value; // Kullanıcının girdiği IP adresi
+
+            // IP adresine dayalı konum verisi almak için API isteği yapılıyor
+            fetch(`http://ip-api.com/json/${ipAdres}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "fail") {
+                        document.getElementById("konum").innerHTML = "Geçersiz IP adresi veya veri alınamadı.";
+                    } else {
+                        // Konum bilgilerini ekrana yazdır
+                        const enlem = data.lat;
+                        const boylam = data.lon;
+
+                        document.getElementById("konum").innerHTML = 
+                            "Şehir: " + data.city + "<br>" + 
+                            "Ülke: " + data.country + "<br>" +
+                            "Enlem: " + enlem + "<br>" + 
+                            "Boylam: " + boylam;
+
+                        // Konum bilgisini input alanlarına yazdır
+                        document.getElementById("konumEnlem").value = enlem;
+                        document.getElementById("konumBoylam").value = boylam;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("konum").innerHTML = "Bir hata oluştu.";
+                    console.error(error);
+                });
+        }
+    </script>
+</body>
+</html>
